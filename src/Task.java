@@ -36,6 +36,13 @@ public class Task {
         return taskDate;
     }
 
+    public String getDateFormatted() {
+        //Anything under a minute isn't important
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        Date thisDate = this.taskDate.getTime();
+        return dateFormat.format(thisDate);
+    }
+
     public String getMessage() {
         return message;
     }
@@ -52,12 +59,8 @@ public class Task {
     public boolean equals(Object obj) {
         if (obj != null && obj instanceof Task) {
             Task otherTask = (Task) obj;
-            //Compare the time to the minute, anything below that isn't important
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-            Date thisDate = this.taskDate.getTime();
-            Date otherDate = otherTask.taskDate.getTime();
-            String thisDateString = dateFormat.format(thisDate);
-            String otherDateString = dateFormat.format(otherDate);
+            String thisDateString = this.getDateFormatted();
+            String otherDateString = otherTask.getDateFormatted();
             return thisDateString.equalsIgnoreCase(otherDateString) && this.message.equalsIgnoreCase(otherTask.message);
         }
         return false;

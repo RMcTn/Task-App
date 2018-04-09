@@ -25,9 +25,8 @@ public class Main {
                     return;
                 Calendar now = Calendar.getInstance();
                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-                Date thisDate = taskTemp.getTaskDate().getTime();
                 Date otherDate = now.getTime();
-                String thisDateString = dateFormat.format(thisDate);
+                String thisDateString = taskTemp.getDateFormatted();
                 String otherDateString = dateFormat.format(otherDate);
                 if (thisDateString.equalsIgnoreCase(otherDateString)) {
                     try {
