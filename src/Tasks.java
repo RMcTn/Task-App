@@ -5,7 +5,7 @@ import java.util.List;
 
 public class Tasks {
 
-    private List<Task> tasks;
+    private volatile List<Task> tasks;
 
     public Tasks() {
         tasks = new ArrayList<>();
@@ -44,18 +44,19 @@ public class Tasks {
     }
 
     public void saveTasks() throws IOException {
-        FileOutputStream fileOutputStream = new FileOutputStream("tasks.s");
+        FileOutputStream fileOutputStream = new FileOutputStream("tasks.ser");
         ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
         objectOutputStream.writeObject(tasks);
         objectOutputStream.close();
-        System.out.println("Wrote to tasks.s");
+        System.out.println("Wrote to tasks.ser");
     }
 
     public void loadTasks() throws IOException, ClassNotFoundException{
-        FileInputStream fileInputStream = new FileInputStream("tasks.s");
+        FileInputStream fileInputStream = new FileInputStream("tasks.ser");
         ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
         tasks = (List<Task>) objectInputStream.readObject();
         objectInputStream.close();
-        System.out.println("Read from tasks.s");
+        System.out.println("Read from tasks.ser");
     }
+
 }
