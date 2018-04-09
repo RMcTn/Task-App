@@ -11,6 +11,7 @@ public class Task {
     private Calendar creationDate;
     private Calendar taskDate;
     private boolean completed = false;
+    private boolean notified = false;
 
     public Task(String message, Calendar taskDate) {
         this.message = message;
@@ -37,6 +38,14 @@ public class Task {
 
     public String getMessage() {
         return message;
+    }
+
+    public boolean hasNotified() {
+        return notified;
+    }
+
+    public void setNotified(boolean notified) {
+        this.notified = notified;
     }
 
     @Override
