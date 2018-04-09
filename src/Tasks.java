@@ -1,3 +1,4 @@
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -40,5 +41,21 @@ public class Tasks {
 
     public List<Task> getTasks() {
         return tasks;
+    }
+
+    public void saveTasks() throws IOException {
+        FileOutputStream fileOutputStream = new FileOutputStream("tasks.s");
+        ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
+        objectOutputStream.writeObject(tasks);
+        objectOutputStream.close();
+        System.out.println("Wrote to tasks.s");
+    }
+
+    public void loadTasks() throws IOException, ClassNotFoundException{
+        FileInputStream fileInputStream = new FileInputStream("tasks.s");
+        ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+        tasks = (List<Task>) objectInputStream.readObject();
+        objectInputStream.close();
+        System.out.println("Read from tasks.s");
     }
 }

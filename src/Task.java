@@ -1,9 +1,10 @@
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class Task {
+public class Task implements Serializable {
 
     private static final AtomicInteger count = new AtomicInteger(0);
     private int ID;
