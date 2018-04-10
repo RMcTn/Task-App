@@ -12,7 +12,6 @@ public class Tasks implements TaskListener {
 
     public Tasks() {
         tasks = new ArrayList<>();
-        Task.setListener(this);
     }
     
     public boolean addTask(Task task) {
@@ -23,6 +22,7 @@ public class Tasks implements TaskListener {
             return false;
         }
 
+        task.setListener(this);
         return tasks.add(task);
     }
 
