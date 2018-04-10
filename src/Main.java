@@ -23,11 +23,6 @@ public class Main {
             @Override
             public void run() {
                 while (true) {
-                    try {
-                        TimeUnit.MINUTES.sleep(1);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
                     System.out.println("Checking all tasks at " + Calendar.getInstance().getTime());
                     for (Task taskTemp: tasks.getTasks()) {
                         if (taskTemp.isComplete())
@@ -51,6 +46,12 @@ public class Main {
                             }
                         }
                     }
+                    try {
+                        TimeUnit.MINUTES.sleep(1);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
                 }
             }
         });
