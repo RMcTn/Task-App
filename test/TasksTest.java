@@ -1,6 +1,7 @@
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.awt.*;
 import java.util.Calendar;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -74,5 +75,32 @@ public class TasksTest {
         //task should be removed when completed, should be null when trying to find it
         task.completeTask();
         assertNull(tasks.findTask("Test completion", now));
+    }
+
+    @Test
+    void testCheckTasks() throws AWTException {
+        Calendar now = Calendar.getInstance();
+        Task taskNow = new Task("Test check tasks", now);
+
+        Calendar earlier = Calendar.getInstance();
+        earlier.set(2000, Calendar.MAY, 0);
+        Task taskEarlier = new Task("Test check tasks", earlier);
+
+        Calendar later = Calendar.getInstance();
+        later.add(Calendar.YEAR, 1);
+        Task taskLater = new Task("Test check tasks", later);
+
+        tasks.addTask(taskNow);
+        tasks.addTask(taskEarlier);
+        tasks.addTask(taskLater);
+
+        tasks.checkTasks();
+
+        //taskNow and taskEarlier should be notified as their time has passed
+        assertTrue(taskNow.hasNotified());
+        assertTrue(taskEarlier.hasNotified());
+
+        //taskLater should have not been notified
+        assertFalse(taskLater.hasNotified());
     }
 }

@@ -23,31 +23,11 @@ public class Main {
             @Override
             public void run() {
                 while (true) {
-                    System.out.println("Checking all tasks at " + Calendar.getInstance().getTime());
-                    for (Task taskTemp: tasks.getTasks()) {
-                        if (taskTemp.isComplete())
-                            continue;
-                        if (taskTemp.hasNotified())
-                            continue;
-                        System.out.println("Checking " + taskTemp.getMessage());
-                        Calendar now = Calendar.getInstance();
-                        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-                        Date otherDate = now.getTime();
-                        String thisDateString = taskTemp.getDateFormatted();
-                        String otherDateString = dateFormat.format(otherDate);
-                        boolean taskIsBeforeNow = taskTemp.getTaskDate().compareTo(now) < 0;
-                        if (thisDateString.equalsIgnoreCase(otherDateString) || taskIsBeforeNow) {
-                            try {
-                                taskTrayIcon.display(taskTemp);
-                                taskTrayIcon.beep();
-                                taskTemp.setNotified(true);
-                            } catch (AWTException e) {
-                                System.out.println("AWTException hit here");
-                            }
-                        }
-                    }
                     try {
+                        tasks.checkTasks();
                         TimeUnit.MINUTES.sleep(1);
+                    } catch (AWTException e) {
+                        e.printStackTrace();
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

@@ -1,6 +1,9 @@
+import java.awt.*;
 import java.io.*;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 public class Tasks implements TaskListener {
@@ -63,5 +66,27 @@ public class Tasks implements TaskListener {
     @Override
     public void taskCompleted(Task task) {
         removeTask(task);
+    }
+
+    public void checkTasks() throws AWTException {
+        for (Task task: getTasks()) {
+            if (task.isComplete())
+                continue;
+            if (task.hasNotified())
+                continue;
+            Calendar now = Calendar.getInstance();
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+            Date otherDate = now.getTime();
+            String thisDateString = task.getDateFormatted();
+            String otherDateString = dateFormat.format(otherDate);
+            boolean taskIsBeforeNow = task.getTaskDate().compareTo(now) < 0;
+            if (thisDateString.equalsIgnoreCase(otherDateString) || taskIsBeforeNow) {
+                //TODO: Move system tray code away from here?
+                TaskTrayIcon taskTrayIcon = new TaskTrayIcon();
+                taskTrayIcon.display(task);
+                taskTrayIcon.beep();
+                task.setNotified(true);
+            }
+        }
     }
 }
