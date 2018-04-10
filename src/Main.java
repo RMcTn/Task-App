@@ -2,7 +2,6 @@ import java.awt.*;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
@@ -12,6 +11,10 @@ public class Main {
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.MINUTE, 1);
         Task task = new Task("Test task", calendar);
+        Calendar early = Calendar.getInstance();
+        early.set(1990, Calendar.MAY, 12);
+        Task earlyTask = new Task("EARLY", early);
+        tasks.addTask(earlyTask);
         tasks.addTask(task);
         TaskTrayIcon taskTrayIcon = new TaskTrayIcon();
 
@@ -23,7 +26,7 @@ public class Main {
                     try {
                         TimeUnit.MINUTES.sleep(1);
                     } catch (Exception e) {
-
+                        e.printStackTrace();
                     }
                     System.out.println("Checking all tasks at " + Calendar.getInstance().getTime());
                     for (Task taskTemp: tasks.getTasks()) {
@@ -37,7 +40,8 @@ public class Main {
                         Date otherDate = now.getTime();
                         String thisDateString = taskTemp.getDateFormatted();
                         String otherDateString = dateFormat.format(otherDate);
-                        if (thisDateString.equalsIgnoreCase(otherDateString)) {
+                        boolean taskIsBeforeNow = taskTemp.getTaskDate().compareTo(now) < 0;
+                        if (thisDateString.equalsIgnoreCase(otherDateString) || taskIsBeforeNow) {
                             try {
                                 taskTrayIcon.display(taskTemp);
                                 taskTrayIcon.beep();
