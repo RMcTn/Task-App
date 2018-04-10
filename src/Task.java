@@ -6,6 +6,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class Task implements Serializable {
 
+    private static TaskListener listener;
+
     private static final AtomicInteger count = new AtomicInteger(0);
     private int ID;
     private String message;
@@ -21,8 +23,13 @@ public class Task implements Serializable {
         ID = count.incrementAndGet();
     }
 
+    public static void setListener(TaskListener listener) {
+        Task.listener = listener;
+    }
+
     public void completeTask() {
         completed = true;
+        listener.taskCompleted(this);
     }
 
     public boolean isComplete() {

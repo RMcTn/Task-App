@@ -2,6 +2,7 @@ import java.awt.*;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
@@ -25,7 +26,7 @@ public class Main {
 
                     }
                     System.out.println("Checking all tasks at " + Calendar.getInstance().getTime());
-                    for (Task taskTemp : tasks.getTasks()) {
+                    for (Task taskTemp: tasks.getTasks()) {
                         if (taskTemp.isComplete())
                             continue;
                         if (taskTemp.hasNotified())

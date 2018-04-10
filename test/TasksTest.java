@@ -6,7 +6,7 @@ import java.util.Calendar;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class TasksTest {
-    Tasks tasks;
+    private Tasks tasks;
 
     @BeforeEach
     public void setup() {
@@ -63,5 +63,16 @@ public class TasksTest {
         Calendar laterCalendar = Calendar.getInstance();
         laterCalendar.add(Calendar.MINUTE, 10);
         assertNull(tasks.findTask(message, laterCalendar));
+    }
+
+    @Test
+    void testTaskCompleted() {
+        Calendar now = Calendar.getInstance();
+        Task task = new Task("Test completion", now);
+        tasks.addTask(task);
+
+        //task should be removed when completed, should be null when trying to find it
+        task.completeTask();
+        assertNull(tasks.findTask("Test completion", now));
     }
 }

@@ -36,4 +36,5 @@ public class TaskTest {
         Task sameTask = new Task("Earlier task", sameCalendarAsEarlier);
         assertTrue(earlierTask.equals(sameTask));
     }
+
 }

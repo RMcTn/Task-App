@@ -3,12 +3,13 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-public class Tasks {
+public class Tasks implements TaskListener {
 
     private volatile List<Task> tasks;
 
     public Tasks() {
         tasks = new ArrayList<>();
+        Task.setListener(this);
     }
     
     public boolean addTask(Task task) {
@@ -59,4 +60,8 @@ public class Tasks {
         System.out.println("Read from tasks.ser");
     }
 
+    @Override
+    public void taskCompleted(Task task) {
+        removeTask(task);
+    }
 }
