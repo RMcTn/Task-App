@@ -22,7 +22,7 @@ public class Tasks implements TaskListener {
             return false;
         }
 
-        task.setListener(this);
+        task.addListener(this);
         return tasks.add(task);
     }
 
@@ -55,7 +55,7 @@ public class Tasks implements TaskListener {
         System.out.println("Wrote to tasks.ser");
     }
 
-    public void loadTasks() throws IOException, ClassNotFoundException{
+    public void loadTasks() throws IOException, ClassNotFoundException {
         FileInputStream fileInputStream = new FileInputStream("tasks.ser");
         ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
         tasks = (List<Task>) objectInputStream.readObject();
@@ -65,6 +65,7 @@ public class Tasks implements TaskListener {
 
     @Override
     public void taskCompleted(Task task) {
+        System.out.println("Removing " + task.getMessage());
         removeTask(task);
     }
 

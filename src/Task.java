@@ -1,12 +1,14 @@
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Task implements Serializable {
 
-    private TaskListener listener;
+    private List<TaskListener> listeners;
 
     private static final AtomicInteger count = new AtomicInteger(0);
     private int ID;
@@ -21,15 +23,17 @@ public class Task implements Serializable {
         this.taskDate = taskDate;
         this.creationDate = Calendar.getInstance();
         ID = count.incrementAndGet();
+        listeners = new ArrayList<>();
     }
 
-    public void setListener(TaskListener listener) {
-        this.listener = listener;
+    public void addListener(TaskListener listener) {
+        listeners.add(listener);
     }
 
     public void completeTask() {
         completed = true;
-        listener.taskCompleted(this);
+        for (TaskListener listener: listeners)
+            listener.taskCompleted(this);
     }
 
     public boolean isComplete() {
