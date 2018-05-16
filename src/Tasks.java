@@ -6,7 +6,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-public class Tasks implements TaskListener {
+public class Tasks implements TaskListener, Serializable {
 
     private volatile List<Task> tasks;
 
@@ -56,7 +56,9 @@ public class Tasks implements TaskListener {
     }
 
     public void loadTasks() throws IOException, ClassNotFoundException {
-        FileInputStream fileInputStream = new FileInputStream("tasks.ser");
+        File file = new File("Tasks.ser");
+        file.createNewFile();
+        FileInputStream fileInputStream = new FileInputStream(file);
         ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
         tasks = (List<Task>) objectInputStream.readObject();
         objectInputStream.close();
