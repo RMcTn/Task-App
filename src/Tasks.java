@@ -9,9 +9,15 @@ import java.util.List;
 public class Tasks implements TaskListener, Serializable {
 
     private volatile List<Task> tasks;
+    private List<UiListener> uiListeners;
 
     public Tasks() {
         tasks = new ArrayList<>();
+        uiListeners = new ArrayList<>();
+    }
+
+    public void addUiListener(UiListener uiListener) {
+        uiListeners.add(uiListener);
     }
     
     public boolean addTask(Task task) {
@@ -36,6 +42,20 @@ public class Tasks implements TaskListener, Serializable {
         if (index == -1) {
             return null;
         }
+        return tasks.get(index);
+    }
+
+    public List<Task> findTask(String message) {
+        ArrayList<Task> tasksWithMessage = new ArrayList<>();
+        for (Task task: tasks) {
+            if (task.getMessage().equalsIgnoreCase(message)) {
+                tasksWithMessage.add(task);
+            }
+        }
+        return tasksWithMessage;
+    }
+
+    public Task findTask(int index) throws IndexOutOfBoundsException {
         return tasks.get(index);
     }
 
@@ -67,8 +87,19 @@ public class Tasks implements TaskListener, Serializable {
 
     @Override
     public void taskCompleted(Task task) {
-        System.out.println("Removing " + task.getMessage());
+        //TODO: Should tasks be removed when completed?
+        for (UiListener uiListener: uiListeners) {
+            uiListener.taskCompleted(task);
+        }
         removeTask(task);
+    }
+
+    @Override
+    public void taskNotified(Task task) {
+        //TODO: Decide what to do here (system icon stuff? nothing?)
+        for (UiListener uiListener: uiListeners) {
+            uiListener.taskNotified(task);
+        }
     }
 
     public void checkTasks() throws AWTException {

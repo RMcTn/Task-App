@@ -50,7 +50,7 @@ public class Task implements Serializable {
 
     public String getDateFormatted() {
         //Anything under a minute isn't important
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm dd-MM-yyyy");
         Date thisDate = this.taskDate.getTime();
         return dateFormat.format(thisDate);
     }
@@ -65,6 +65,10 @@ public class Task implements Serializable {
 
     public void setNotified(boolean notified) {
         this.notified = notified;
+        //TODO: have a notify for task listeners, just like completion? allows displaying of tasks on ui etc
+        for (TaskListener taskListener: listeners) {
+            taskListener.taskNotified(this);
+        }
     }
 
     @Override

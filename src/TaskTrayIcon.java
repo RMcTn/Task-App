@@ -2,7 +2,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class TaskTrayIcon {
+public class TaskTrayIcon implements TaskListener {
 
     public void display(Task task) throws AWTException {
         SystemTray tray = SystemTray.getSystemTray();
