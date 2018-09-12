@@ -45,16 +45,6 @@ public class Tasks implements TaskListener, Serializable {
         return tasks.get(index);
     }
 
-    public List<Task> findTask(String message) {
-        ArrayList<Task> tasksWithMessage = new ArrayList<>();
-        for (Task task: tasks) {
-            if (task.getMessage().equalsIgnoreCase(message)) {
-                tasksWithMessage.add(task);
-            }
-        }
-        return tasksWithMessage;
-    }
-
     public Task findTask(int index) throws IndexOutOfBoundsException {
         return tasks.get(index);
     }
@@ -92,6 +82,7 @@ public class Tasks implements TaskListener, Serializable {
             uiListener.taskCompleted(task);
         }
         removeTask(task);
+        TaskTrayIcon.remove(task);
     }
 
     @Override
