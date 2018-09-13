@@ -10,10 +10,17 @@ public class Tasks implements TaskListener, Serializable {
 
     private volatile List<Task> tasks;
     private List<UiListener> uiListeners;
+    private boolean usingSystemTray;
 
     public Tasks() {
         tasks = new ArrayList<>();
         uiListeners = new ArrayList<>();
+        //NOTE: Setting to true by default for now. Allow for changing later
+        usingSystemTray = true;
+    }
+
+    public void setUsingSystemTray(boolean usingSystemTray) {
+        this.usingSystemTray = usingSystemTray;
     }
 
     public void addUiListener(UiListener uiListener) {
@@ -82,7 +89,8 @@ public class Tasks implements TaskListener, Serializable {
             uiListener.taskCompleted(task);
         }
         removeTask(task);
-        TaskTrayIcon.remove(task);
+        if (usingSystemTray)
+            TaskTrayIcon.remove(task);
     }
 
     @Override
@@ -106,10 +114,12 @@ public class Tasks implements TaskListener, Serializable {
             String otherDateString = dateFormat.format(otherDate);
             boolean taskIsBeforeNow = task.getTaskDate().compareTo(now) < 0;
             if (thisDateString.equalsIgnoreCase(otherDateString) || taskIsBeforeNow) {
-                //TODO: Move system tray code away from here?
-                TaskTrayIcon taskTrayIcon = new TaskTrayIcon();
-                taskTrayIcon.display(task);
-                taskTrayIcon.beep();
+                if (usingSystemTray) {
+                    //TODO: Move system tray code away from here?
+                    TaskTrayIcon taskTrayIcon = new TaskTrayIcon();
+                    taskTrayIcon.display(task);
+                    taskTrayIcon.beep();
+                }
                 task.setNotified(true);
             }
         }

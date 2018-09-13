@@ -12,6 +12,7 @@ public class TasksTest {
     @BeforeEach
     public void setup() {
         tasks = new Tasks();
+        tasks.setUsingSystemTray(false);
     }
 
     @Test
@@ -64,6 +65,12 @@ public class TasksTest {
         Calendar laterCalendar = Calendar.getInstance();
         laterCalendar.add(Calendar.MINUTE, 10);
         assertNull(tasks.findTask(message, laterCalendar));
+
+        //Only one task in tasks, should be equal
+        assertEquals(task, tasks.findTask(0));
+
+        //Should throw, no index 1 in tasks
+        assertThrows(IndexOutOfBoundsException.class, ()->{tasks.findTask(1);});
     }
 
     @Test
@@ -71,7 +78,6 @@ public class TasksTest {
         Calendar now = Calendar.getInstance();
         Task task = new Task("Test completion", now);
         tasks.addTask(task);
-
         //task should be removed when completed, should be null when trying to find it
         task.completeTask();
         assertNull(tasks.findTask("Test completion", now));

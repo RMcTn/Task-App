@@ -10,11 +10,12 @@ public class TaskTrayIcon {
     public TaskTrayIcon() {
         taskTrayIconMap = new HashMap<>();
     }
-
+//TODO: Add tests for this class
     public static void remove(Task task) {
         SystemTray tray = SystemTray.getSystemTray();
         TrayIcon trayIcon = taskTrayIconMap.get(task);
-        tray.remove(trayIcon);
+        if (trayIcon != null)
+            tray.remove(trayIcon);
     }
 
     public void display(Task task) throws AWTException {
