@@ -129,6 +129,8 @@ public class ConsoleUI extends UI implements TaskListener {
                 System.out.println("Time must be in integer form");
                 return;
             }
+        } else if (tokens.length == 3) {
+            //Hour, minute and day have been entered. Create date with current month and year, with hour and minute changed
         } else if (tokens.length < 5) {
             //All fields entered except year, so use current year for date
             try {
@@ -205,9 +207,13 @@ public class ConsoleUI extends UI implements TaskListener {
 
     @Override
     public void completeTask(int taskIndex) {
-        Task taskToComplete = tasks.findTask(taskIndex);
-        taskToComplete.completeTask();
-        System.out.println("Completed task " + taskToComplete.getMessage());
+        try {
+            Task taskToComplete = tasks.findTask(taskIndex);
+            taskToComplete.completeTask();
+            System.out.println("Completed task " + taskToComplete.getMessage());
+        } catch (IndexOutOfBoundsException e) {
+            System.out.println("Could not complete task with index " + taskIndex + ". Out of bounds");
+        }
     }
 
     @Override
