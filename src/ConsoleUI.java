@@ -223,7 +223,7 @@ public class ConsoleUI extends UI implements TaskListener {
 
     @Override
     public void taskNotified(Task task) {
-        System.out.println("Task " + task.getMessage() + " " + task.getDateFormatted() + " is due!!!");
-
+        System.out.println("\nTask " + task.getMessage() + " " + task.getDateFormatted() + " is due!");
+        System.out.print("Action:  ");
     }
 }
