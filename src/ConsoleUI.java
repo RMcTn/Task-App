@@ -1,4 +1,4 @@
-import java.io.IOException;
+import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -11,13 +11,17 @@ public class ConsoleUI extends UI implements TaskListener {
 
     public ConsoleUI() {
         super();
+        if (!successfulTaskLoad) {
+            System.out.println("Could not loads tasks. New tasks will still be attempted to be saved");
+            System.out.println("Try 'load' to try again");
+        }
         scanner = new Scanner(System.in);
     }
 
     public void step() {
         String input = getInput("Action:");
         String[] tokens = input.split(" ");
-        switch(tokens[0]) {
+        switch (tokens[0]) {
             case "list":
                 showTasks();
                 break;
@@ -44,14 +48,16 @@ public class ConsoleUI extends UI implements TaskListener {
                     System.out.println("Complete requires 1 integer parameter");
                 }
                 break;
-            case "quit":
-                //TODO: Quit more gracefully
+            case "load":
                 try {
-                    tasks.saveTasks();
-                } catch (IOException e) {
-                    e.printStackTrace();
+                    tasks.loadTasks();
+                    System.out.println("Loaded tasks successfully");
+                } catch (SQLException e) {
+                    System.out.println("Could not load tasks. " + e.getMessage());
                 }
                 break;
+            case "quit":
+                System.exit(0);
             default:
                 System.out.println("Invalid command");
                 //TODO: Should print out valid commands or "help" command
@@ -92,8 +98,6 @@ public class ConsoleUI extends UI implements TaskListener {
         if (tokens.length == 1) {
             //Only hour has been entered, create a date with current date, and hour rounded to HH:00
             try {
-                //TODO: move getting hour and mintue etc into functions with error checking
-                //(getHourInput() etc)
                 int hour = getHour(tokens[0]);
                 calendar.set(Calendar.HOUR_OF_DAY, hour);
                 calendar.set(Calendar.MINUTE, 0);
@@ -131,7 +135,7 @@ public class ConsoleUI extends UI implements TaskListener {
                 System.out.println("Not enough arguments. Month has been missed out");
                 return;
             }
-        } else  {
+        } else {
             //Parse the string to create a date
             try {
                 Date date;
@@ -150,10 +154,14 @@ public class ConsoleUI extends UI implements TaskListener {
     }
 
     public void addTask(Task task) {
-        if (tasks.addTask(task))
-            System.out.println("Added task " + task.getMessage() + " for " + task.getDateFormatted());
-        else
-            System.out.println("Could not add task " + task.getMessage() + ", already exists");
+        try {
+            if (tasks.addTask(task))
+                System.out.println("Added task " + task.getMessage() + " for " + task.getDateFormatted());
+            else
+                System.out.println("Could not add task " + task.getMessage() + ", already exists");
+        } catch (SQLException e) {
+            System.out.println("Could not add task " + e.getMessage());
+        }
     }
 
     @Override
@@ -164,6 +172,8 @@ public class ConsoleUI extends UI implements TaskListener {
             System.out.println("Removed task with index " + taskIndex + " (" + taskToRemove.getMessage() + ")");
         } catch (IndexOutOfBoundsException e) {
             System.out.println("Could not remove task with index " + taskIndex + ". Out of bounds");
+        } catch (SQLException e) {
+            System.out.println("Could not remove task with index " + taskIndex + e.getMessage());
         }
     }
 
@@ -174,7 +184,7 @@ public class ConsoleUI extends UI implements TaskListener {
             return;
         }
         int i = 0;
-        for (Task task: tasks.getTasks()) {
+        for (Task task : tasks.getTasks()) {
             System.out.printf("%d: %s, %tc, Created: %tc Complete: %b, Notified: %b\n", i++, task.getMessage(), task.getTaskDate(), task.getCreationDate(), task.isComplete(), task.hasNotified());
         }
 
@@ -183,7 +193,6 @@ public class ConsoleUI extends UI implements TaskListener {
     @Override
     public void completeTask(int taskIndex) {
         Task taskToComplete = tasks.findTask(taskIndex);
-        //TODO: Completing through this method does NOT remove the task tray icon
         taskToComplete.completeTask();
         System.out.println("Completed task " + taskToComplete.getMessage());
     }
