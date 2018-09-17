@@ -16,6 +16,17 @@ public class ConsoleUI extends UI implements TaskListener {
             System.out.println("Try 'load' to try again");
         }
         scanner = new Scanner(System.in);
+        System.out.println("Use 'help' for commands");
+    }
+
+    private void showHelp() {
+        System.out.print("list\t\t\tLists current tasks and their indexes\n" +
+                "add\t\t\tAdds a new task\n" +
+                "remove <index>\t\tRemoves a task with given task index\n" +
+                "complete <index>\tCompletes a task with given task index\n" +
+                "load\t\t\tLoads all stored tasks (Done at startup)\n" +
+                "quit\t\t\tQuits the program\n" +
+                "help\t\t\tShows this text\n");
     }
 
     public void step() {
@@ -56,11 +67,13 @@ public class ConsoleUI extends UI implements TaskListener {
                     System.out.println("Could not load tasks. " + e.getMessage());
                 }
                 break;
+            case "help":
+                showHelp();
+                break;
             case "quit":
                 System.exit(0);
             default:
                 System.out.println("Invalid command");
-                //TODO: Should print out valid commands or "help" command
         }
     }
 
