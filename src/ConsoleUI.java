@@ -27,6 +27,8 @@ public class ConsoleUI extends UI implements TaskListener {
                 "load\t\t\tLoads all stored tasks (Done at startup)\n" +
                 "quit\t\t\tQuits the program\n" +
                 "help\t\t\tShows this text\n");
+
+        System.out.println("");
     }
 
     public void step() {
@@ -100,72 +102,96 @@ public class ConsoleUI extends UI implements TaskListener {
         return minute;
     }
 
-    @Override
-    public void addTask() {
-        String message = getInput("Task message:");
+    private int getDay(String string) throws NumberFormatException {
+        int day = Integer.parseInt(string);
+        if (day < 1 || day > 31) {
+            return -1;
+        }
+        return day;
+    }
+
+    private int getMonth(String string) throws NumberFormatException {
+        int month = Integer.parseInt(string);
+        if (month < 1 || month > 12) {
+            return -1;
+        }
+        return month;
+    }
+
+    private Calendar getTaskDateInput() throws ParseException, NumberFormatException {
         String dateString = getInput("Due date of task \"HH mm d(ay) M(onth) yyyy (year)\" (all integers)");
         String[] tokens = dateString.split(" ");
         //TODO: Add checking for dates entered before current time
         Calendar calendar = Calendar.getInstance();
+        //Second doesn't matter, set to 0
         calendar.set(Calendar.SECOND, 0);
-        if (tokens.length == 1) {
-            //Only hour has been entered, create a date with current date, and hour rounded to HH:00
-            try {
-                int hour = getHour(tokens[0]);
-                calendar.set(Calendar.HOUR_OF_DAY, hour);
-                calendar.set(Calendar.MINUTE, 0);
-            } catch (NumberFormatException e) {
-                System.out.println("Time must be in integer form");
-                return;
-            }
-        } else if (tokens.length == 2) {
-            //Hour and minute have been entered. Create date with current date, with hour and minute changed
-            try {
-                int hour = getHour(tokens[0]);
-                int minute = getMinute(tokens[1]);
-                calendar.set(Calendar.HOUR_OF_DAY, hour);
-                calendar.set(Calendar.MINUTE, minute);
-            } catch (NumberFormatException e) {
-                System.out.println("Time must be in integer form");
-                return;
-            }
-        } else if (tokens.length == 3) {
-            //Hour, minute and day have been entered. Create date with current month and year, with hour and minute changed
-        } else if (tokens.length < 5) {
-            //All fields entered except year, so use current year for date
-            try {
-                int hour = getHour(tokens[0]);
-                int minute = getMinute(tokens[1]);
-                //Days and months CAN be < 0 or > than their respective maxes (this will just rollover)
-                int day = Integer.parseInt(tokens[2]);
-                int month = Integer.parseInt(tokens[3]);
-                calendar.set(Calendar.HOUR_OF_DAY, hour);
-                calendar.set(Calendar.MINUTE, minute);
-                calendar.set(Calendar.DAY_OF_MONTH, day);
-                calendar.set(Calendar.MONTH, month);
-            } catch (NumberFormatException e) {
-                System.out.println("Hour, minute, day and month must be an integer");
-                return;
-            } catch (IndexOutOfBoundsException e) {
-                System.out.println("Not enough arguments. Month has been missed out");
-                return;
-            }
-        } else {
-            //Parse the string to create a date
-            try {
-                Date date;
-                //No checks are made here for logical out of bounds values
-                //TODO: Should checks be added?
-                DateFormat dateFormat = new SimpleDateFormat("HH mm d M yyyy");
-                date = dateFormat.parse(dateString);
-                calendar.setTime(date);
-            } catch (ParseException e) {
-                System.out.println(dateString + " is not in the correct format");
-                return;
-            }
+        //Default minute to 0
+        calendar.set(Calendar.MINUTE, 0);
+        int hour;
+        int minute;
+        int day;
+        int month;
+        int year;
+        if (tokens.length > 5) {
+            System.out.println("Too many arguments");
+            return null;
         }
-        Task task = new Task(message, calendar);
-        addTask(task);
+        if (tokens.length > 0) {
+            hour = getHour(tokens[0]);
+            if (hour == -1) {
+                System.out.println("Hour must be between 0 and 60");
+                return null;
+            }
+            calendar.set(Calendar.HOUR_OF_DAY, hour);
+        }
+        if (tokens.length > 1) {
+            minute = getMinute(tokens[1]);
+            if (minute == -1) {
+                System.out.println("Minute must be between 0 and 60");
+                return null;
+            }
+            calendar.set(Calendar.MINUTE, minute);
+        }
+        if (tokens.length > 2) {
+            day = getDay(tokens[2]);
+            if (day == -1) {
+                System.out.println("Day must be between 1 and 30");
+                return null;
+            }
+            calendar.set(Calendar.DAY_OF_MONTH, day);
+        }
+        if (tokens.length > 3) {
+            month = getMonth(tokens[3]);
+            if (month == -1) {
+                System.out.println("Month must be between 1 and 12");
+                return null;
+            }
+            calendar.set(Calendar.MONTH, month);
+        }
+        if (tokens.length == 5) {
+            year = Integer.parseInt(tokens[4]);
+            calendar.set(Calendar.YEAR, year);
+        }
+
+        return calendar;
+    }
+
+    @Override
+    public void addTask() {
+        try {
+            String message = getInput("Task message:");
+            Calendar calendar = getTaskDateInput();
+            if (calendar == null) {
+                //Some input was incorrect, don't create a task
+                return;
+            }
+            Task task = new Task(message, calendar);
+            addTask(task);
+        } catch (NumberFormatException e) {
+            System.out.println("Input must be in integer form");
+        } catch (ParseException e) {
+            System.out.println("Could not parse the input. " + e.getMessage());
+        }
     }
 
     public void addTask(Task task) {
